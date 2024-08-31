@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
 
 from src.domain.task import Task
 
@@ -10,11 +9,11 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    def get(self, task_id: int) -> Optional[Task]:
+    def get(self, task_id: int) -> Task | None:
         pass
 
     @abstractmethod
-    def list(self) -> List[Task]:
+    def list(self) -> list[Task]:
         pass
 
     @abstractmethod

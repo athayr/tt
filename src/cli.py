@@ -1,10 +1,14 @@
 import typer
+from rich import pretty
+from rich.console import Console
 
+from src.core.rich_table import task_table, users_table
 from src.crud.task_repository import TaskRepository
 from src.domain.task import TaskCreate, TaskStatus, TaskUpdate
 from src.infrastructure.db.session import get_session
 
 app = typer.Typer()
+console = Console()
 
 users_distinct = {-1: 'default', -2: 'outro'}
 
@@ -21,9 +25,11 @@ def create_task(
     if not user:
         users = repository.distinct_user()
         for key, db_user in enumerate(users):
-            users_distinct.update({key: db_user.lower()})
+            if db_user.lower() != 'default':
+                users_distinct.update({key: db_user.lower()})
 
-        print(users_distinct)
+        pretty.install()
+        users_table('Users list', users_distinct)
         index = int(input('Selectione um responsavel, use a chave: '))
 
         if index == -2:
@@ -33,7 +39,7 @@ def create_task(
 
     task = TaskCreate(title=title, description=description, user=user.lower())
     repository.add(task)
-    typer.echo(f"Tarefa '{title}' criada com sucesso!")
+    console.print(f"Tarefa '{title}' criada com sucesso!", style='bold green')
 
 
 @app.command()
@@ -41,11 +47,11 @@ def list_all_tasks():
     db = next(get_session())
     repository = TaskRepository(db)
     tasks = repository.list()
+
     if tasks:
-        for task in tasks:
-            typer.echo(f'{task.id}: {task.title} - {task.status}')
+        task_table('All Tasks', tasks)
     else:
-        typer.echo('Nenhuma tarefa encontrada.')
+        console.print('Nenhuma tarefa encontrada.', style='bold red')
 
 
 @app.command()
@@ -54,10 +60,9 @@ def list_complete_tasks():
     repository = TaskRepository(db)
     tasks = repository.list_by_status(TaskStatus.COMPLETED)
     if tasks:
-        for task in tasks:
-            typer.echo(f'{task.id}: {task.title} - {task.status}')
+        task_table('Complete Tasks', tasks)
     else:
-        typer.echo('Nenhuma tarefa encontrada.')
+        console.print('Nenhuma tarefa encontrada.', style='bold red')
 
 
 @app.command()
@@ -66,10 +71,9 @@ def list_canceled_tasks():
     repository = TaskRepository(db)
     tasks = repository.list_by_status(TaskStatus.CANCELLED)
     if tasks:
-        for task in tasks:
-            typer.echo(f'{task.id}: {task.title} - {task.status}')
+        task_table('Canceled Tasks', tasks)
     else:
-        typer.echo('Nenhuma tarefa encontrada.')
+        console.print('Nenhuma tarefa encontrada.', style='bold red')
 
 
 @app.command()
@@ -78,10 +82,9 @@ def list_pending_tasks():
     repository = TaskRepository(db)
     tasks = repository.list_by_status(TaskStatus.PENDING)
     if tasks:
-        for task in tasks:
-            typer.echo(f'{task.id}: {task.title} - {task.status}')
+        task_table('Pending Tasks', tasks)
     else:
-        typer.echo('Nenhuma tarefa encontrada.')
+        console.print('Nenhuma tarefa encontrada.', style='bold red')
 
 
 @app.command()
@@ -96,9 +99,14 @@ def update_task(title: str = None, description: str = None):
     task_udpdated = repository.update(task, task_id)
 
     if task_udpdated:
-        typer.echo(f"Tarefa '{task_udpdated.title}' atualizada com sucesso!")
+        console.print(
+            f'Tarefa com ID {task_id} excluída com sucesso!',
+            style='bold green',
+        )
     else:
-        typer.echo(f'Tarefa com ID {task_id} não encontrada.')
+        console.print(
+            f'Tarefa com ID {task_id} não encontrada.', style='bold red'
+        )
 
 
 @app.command()
@@ -109,7 +117,9 @@ def delete_task():
     db = next(get_session())
     repository = TaskRepository(db)
     repository.delete(task_id)
-    typer.echo(f'Tarefa com ID {task_id} excluída com sucesso!')
+    console.print(
+        f'Tarefa com ID {task_id} excluída com sucesso!', style='bold green'
+    )
 
 
 @app.command()
@@ -124,9 +134,14 @@ def complete_task():
     task_udpdated = repository.update(task, task_id)
 
     if task_udpdated:
-        typer.echo(f"Tarefa '{task_udpdated.title}' atualizada com sucesso!")
+        console.print(
+            f"Tarefa '{task_udpdated.title}' atualizada com sucesso!",
+            style='bold green',
+        )
     else:
-        typer.echo(f'Tarefa com ID {task_id} não encontrada.')
+        console.print(
+            f'Tarefa com ID {task_id} não encontrada.', style='bold red'
+        )
 
 
 @app.command()
@@ -141,9 +156,14 @@ def cancel_task():
     task_udpdated = repository.update(task, task_id)
 
     if task_udpdated:
-        typer.echo(f"Tarefa '{task_udpdated.title}' atualizada com sucesso!")
+        console.print(
+            f"Tarefa '{task_udpdated.title}' atualizada com sucesso!",
+            style='bold green',
+        )
     else:
-        typer.echo(f'Tarefa com ID {task_id} não encontrada.')
+        console.print(
+            f'Tarefa com ID {task_id} não encontrada.', style='bold red'
+        )
 
 
 if __name__ == '__main__':
