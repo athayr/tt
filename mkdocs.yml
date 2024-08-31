@@ -1,0 +1,14 @@
+site_name: My Tasks
+
+theme:
+  name: material
+  language: pt-BR
+  favicon: assets/tasks.png
+  logo: assets/tasks.png
+
+markdown_extensions:
+  - admonition
+  - attr_list
+
+extra_css:
+  - stylesheets/extra.css
