@@ -23,4 +23,6 @@ if __name__ == '__main__':
 
     task_repository.delete(nt.id)
 
+    users = task_repository.distinct_user()
+
     print(task)
