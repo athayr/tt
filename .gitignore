@@ -132,7 +132,6 @@ dmypy.json
 configs/
 ignore/
 .DS_Store
-requirements.txt
 *.log
 
 .idea/
