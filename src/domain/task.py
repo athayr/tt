@@ -10,14 +10,18 @@ class TaskStatus(str, Enum):
     COMPLETED = auto()
 
 
-class TaskCreate(BaseModel):
+class TaskBase(BaseModel):
     title: str
     description: str
 
 
+class TaskCreate(TaskBase):
+    user: str
+
+
 class TaskUpdate(BaseModel):
-    title: str | None
-    description: str | None
+    title: str | None = None
+    description: str | None = None
 
 
 class Task(BaseModel):
