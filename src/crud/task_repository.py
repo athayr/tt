@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import Row, RowMapping, and_, delete, desc, update
 from sqlalchemy.future import select
+from sqlalchemy.orm import Session
 
 from src.crud.repository import Repository
 from src.domain.task import Task, TaskCreate, TaskUpdate
@@ -18,7 +18,7 @@ class TaskRepository(Repository):
         return Task.model_validate(task_model)
 
     def get(self, task_id: int) -> Task | None:
-        query = select(TaskModel).where(TaskModel.id == task_id)
+        query = select(TaskModel).where(task_id == TaskModel.id)
         task_model = self.session.execute(query)
         if _result := task_model.scalar():
             return Task.model_validate(_result)
@@ -29,12 +29,12 @@ class TaskRepository(Repository):
         task_models = self.session.execute(query).scalars()
         return [Task.model_validate(task_model) for task_model in task_models]
 
-    def update(self, task: TaskUpdate, task_id: int) -> None:
+    def update(self, task: TaskUpdate, task_id: int) -> Task:
         in_schema = task.model_dump(exclude_none=True)
 
         task_model = self.session.execute(
             update(TaskModel)
-            .where(TaskModel.id == task_id)
+            .where(task_id == TaskModel.id)
             .values(**in_schema)
             .returning(TaskModel)
         )
@@ -45,7 +45,7 @@ class TaskRepository(Repository):
     def delete(self, task_id: int) -> None:
         query = (
             delete(TaskModel)
-            .where(TaskModel.id == task_id)
+            .where(task_id == TaskModel.id)
             .returning(TaskModel)
         )
         task_model = self.session.execute(query)

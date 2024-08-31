@@ -1,5 +1,5 @@
-from src.models.task_model import Base
 from src.infrastructure.db.session import engine
+from src.models.task_model import Base
 
 
 def create_tables():

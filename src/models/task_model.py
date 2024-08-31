@@ -18,8 +18,4 @@ class TaskModel(Base):
     status = Column(Enum(TaskStatus), default=TaskStatus.PENDING)
     created_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
-    updated_at = Column(
-        DateTime,
-        onupdate=datetime.utcnow,
-        nullable=True
-    )
+    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=True)

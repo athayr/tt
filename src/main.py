@@ -1,6 +1,6 @@
 from src.core.config import settings
-from src.domain.task import Task, TaskCreate, TaskBase, TaskUpdate
 from src.crud.task_repository import TaskRepository
+from src.domain.task import Task, TaskBase, TaskCreate, TaskUpdate
 from src.infrastructure.db.session import get_session
 
 if __name__ == '__main__':
