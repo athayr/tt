@@ -1,3 +1,5 @@
+from typing import Any
+
 from rich import box
 from rich.console import Console
 from rich.table import Table
@@ -30,6 +32,23 @@ def users_table(title: str, users: dict[int, str]) -> None:
 
     for key, user in users.items():
         table.add_row(str(key), user)
+
+    console = Console()
+    console.print(table)
+
+
+def render_table(
+    title: str,
+    columns: dict[str, dict[str, str | bool]],
+    values: list[list[str]],
+) -> None:
+    table = Table(title=title)
+
+    for title, kwargs in columns.items():
+        table.add_column(title, **kwargs)
+
+    for value in values:
+        table.add_row(*value)
 
     console = Console()
     console.print(table)

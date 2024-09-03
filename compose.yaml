@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: task_management
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  server:
+    build:
+      context: .
+    container_name: task_management
+    environment:
+      DATABASE_URI: postgresql://postgres:admin@postgres:5432/task_management
+    depends_on:
+      - postgres
+    ports:
+      - 8000:8000
+    command: >
+      sh -c "python src/main.py"
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
