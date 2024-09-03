@@ -9,6 +9,12 @@ theme:
 markdown_extensions:
   - admonition
   - attr_list
+  - toc:
+      permalink: true
+  - tables
+  - codehilite
+  - admonition
+  - pymdownx.superfences
 
 extra_css:
   - stylesheets/extra.css
